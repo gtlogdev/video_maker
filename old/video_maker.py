@@ -1,8 +1,8 @@
 import cv2
-from cv2 import VideoWriter, imread, imwrite
+from cv2 import VideoWriter, imread, resize
 import os, imutils, shutil
 
-def make_video(image_folder, out_video_name, out_video_ext, rotation_angle, image_ext, vid_to_web, fps=5, size=None, is_color=True, format="FMP4"):
+def make_video(image_folder, out_video_name, out_video_ext, rotation_angle, image_ext, vid_to_web, fps=10, size=None, is_color=True, format="FMP4"):
     """
     Create a video from a list of images.
  
@@ -22,31 +22,24 @@ def make_video(image_folder, out_video_name, out_video_ext, rotation_angle, imag
     #fourcc = VideoWriter_fourcc(*format)
     fourcc = cv2.cv.CV_FOURCC(*format)
     vid = None
-    image_thumb = None
-    image_thumb_path = None
     images.sort()
     for image in images:
         if not os.path.exists(image):
             raise FileNotFoundError(image)
         print(image)
         img = imread(image)
-        if image_thumb is None and image[-6:] == "00.jpg":
-            image_thumb = imutils.rotate_bound(img, int(rotation_angle))
-            image_thumb_path = image
-        if(rotation_angle):
-            img = imutils.rotate_bound(img, int(rotation_angle))
+        if rotation_angle is not None:
+            img = imutils.rotate(img, int(rotation_angle))
         if vid is None:
             if size is None:
                 size = img.shape[1], img.shape[0]
             print(image_folder + out_video_name)
             vid = VideoWriter((image_folder + out_video_name+".avi"), fourcc, float(fps), size, is_color)
-        #if size[0] != img.shape[1] and size[1] != img.shape[0]:
-        #    img = resize(img, size)
+        if size[0] != img.shape[1] and size[1] != img.shape[0]:
+            img = resize(img, size)
         vid.write(img)
     if vid is not None:
         vid.release()
-    if image_thumb is not None:
-        imwrite(image_thumb_path, image_thumb)
     if vid_to_web:
         make_for_web(image_folder, (out_video_name+".avi"), (out_video_name+out_video_ext))
     print(vid)
