@@ -50,7 +50,7 @@ def make_video(image_folder, out_video_name, out_video_ext, rotation_angle, imag
         imwrite(image_thumb_path, image_thumb)
     if vid_to_web:
          created_video = make_for_web(image_folder, (out_video_name+".avi"), (out_video_name+out_video_ext))
-    print("********************** VID VARIABLE:" + str(vid))
+    print("INFO: [video_maker - make_video] : CREATED VIDEO:" + str(vid))
     return created_video
 
 def make_for_web(video_path, original_video_name, video_name):

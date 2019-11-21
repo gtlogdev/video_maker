@@ -4,6 +4,12 @@ import video_maker
 import requests
 app = Flask(__name__)
 
+
+@app.route('/test_api')
+def test_api():
+    return "The API is running."
+
+
 @app.route('/movie_api/process_video/', methods=['POST'])
 def process_video():
     if not request.json or not 'id' in request.json:
