@@ -19,12 +19,13 @@ def make_video(image_folder, out_video_name, out_video_ext, rotation_angle, imag
     It will resize every image to this size before adding them to the video.
     """
     images = [image_folder+img for img in os.listdir(image_folder) if img.endswith(image_ext)]
-    #fourcc = VideoWriter_fourcc(*format)
-    fourcc = cv2.cv.CV_FOURCC(*format)
+    fourcc = cv2.VideoWriter_fourcc("F","M","P","4")
+    #fourcc = cv2.cv.CV_FOURCC(*format)
     vid = None
     image_thumb = None
     image_thumb_path = None
     images.sort()
+    created_video = False
     for image in images:
         if not os.path.exists(image):
             raise FileNotFoundError(image)
@@ -48,15 +49,21 @@ def make_video(image_folder, out_video_name, out_video_ext, rotation_angle, imag
     if image_thumb is not None:
         imwrite(image_thumb_path, image_thumb)
     if vid_to_web:
-        make_for_web(image_folder, (out_video_name+".avi"), (out_video_name+out_video_ext))
-    print(vid)
-    return vid
+         created_video = make_for_web(image_folder, (out_video_name+".avi"), (out_video_name+out_video_ext))
+    print("********************** VID VARIABLE:" + str(vid))
+    return created_video
 
 def make_for_web(video_path, original_video_name, video_name):
-    original_video= video_path+original_video_name
-    new_video= video_path+video_name
-    #os.system("ffmpeg -i "+original_video+" -vcodec h264 -acodec aac -strict -2 "+new_video)
-    os.system("ffmpeg -y -i "+original_video+" -f mp4 -vcodec libx264 -profile:v main -acodec aac " +new_video)
+    try:
+        original_video= video_path+original_video_name
+        new_video= video_path+video_name
+        #os.system("ffmpeg -i "+original_video+" -vcodec h264 -acodec aac -strict -2 "+new_video)
+        os.system("ffmpeg -y -i "+original_video+" -f mp4 -vcodec libx264 -profile:v main -acodec aac " +new_video)
+        print("INFO: [video_maker - make_for_web] : WEB VIDEO CREATED.")
+        return True
+    except:
+        print("ERROR: [video_maker - make_for_web] : FAIL WEB VIDEO CREATING.")
+        return False
 
 
 def move_images(images_folder, image_ext):
