@@ -41,18 +41,18 @@ def process_video():
 
 
 def create_video(video_infos):
-	try:
-		video = video_maker.make_video(image_folder=video_infos['images_path'], out_video_name='video', out_video_ext=video_infos['video_ext'], rotation_angle=video_infos['rotation'], image_ext=video_infos['images_ext'], vid_to_web=True)
-		if video is not None:
-			video_maker.move_images(video_infos['images_path'], video_infos['images_ext'])
-			save_video(video_infos['id'], video_infos['return_url'])
-			print("video created")
-			return True
-		else:
-			inform_error(video_infos['id'], video_infos['error_url'])
-			print("error")
-			return False
-	except Exception as e: 
+    try:
+        video = video_maker.make_video(image_folder=video_infos['images_path'], out_video_name='video', out_video_ext=video_infos['video_ext'], rotation_angle=video_infos['rotation'], image_ext=video_infos['images_ext'], vid_to_web=True)
+        if video is not None:
+            video_maker.move_images(video_infos['images_path'], video_infos['images_ext'])
+            save_video(video_infos['id'], video_infos['return_url'])
+            print("video created")
+            return True
+        else:
+            inform_error(video_infos['id'], video_infos['error_url'])
+            print("error")
+            return False
+    except Exception as e: 
         print(e)
         inform_error(video_infos['id'], video_infos['error_url'])
 
