@@ -14,26 +14,30 @@ def test_api():
 def process_video():
     if not request.json or not 'id' in request.json:
         abort(400)
-    print(request.json)
     try:
-        rotation = request.json['rotation']
-    except:
-        rotation = "0"
-    video_infos = {
-        'id': request.json['id'],
-        'images_path':request.json['path'],
-        'rotation': rotation,
-        'images_ext': request.json['files_extension'],
-        'video_ext': request.json['video_ext'],
-        'return_url': request.json['return_url'],
-        'error_url': request.json['error_url']
+        try:
+            rotation = request.json['rotation']
+        except:
+            rotation = "0"
+        video_infos = {
+            'id': request.json['id'],
+            'images_path':request.json['path'],
+            'rotation': rotation,
+            'images_ext': request.json['files_extension'],
+            'video_ext': request.json['video_ext'],
+            'return_url': request.json['return_url'],
+            'error_url': request.json['error_url']
 
-    }
-    processed = create_video(video_infos)
-    if processed:
-        return Response("Processed", status=200, mimetype='application/json')
-    else:
-        return Response("Fail on processing", status=500, mimetype='application/json')
+        }
+        processed = create_video(video_infos)
+        if processed:
+            return Response("Processed", status=200, mimetype='application/json')
+        else:
+            inform_error(video_infos['id'], video_infos['error_url'])
+            return Response("Fail on processing", status=500, mimetype='application/json')
+    except Exception as e:
+        inform_error(video_infos['id'], video_infos['error_url'])
+        print(e)
 
 
 def create_video(video_infos):
@@ -48,8 +52,9 @@ def create_video(video_infos):
 			inform_error(video_infos['id'], video_infos['error_url'])
 			print("error")
 			return False
-	except:
-		return False
+	except Exception as e: 
+        print(e)
+        inform_error(video_infos['id'], video_infos['error_url'])
 
 def save_video(json_id, return_url):
     try:
